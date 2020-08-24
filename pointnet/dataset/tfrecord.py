@@ -1,3 +1,4 @@
+import os
 import trimesh
 from glob import glob
 from tqdm import tqdm
@@ -11,7 +12,7 @@ class TFRecordCreator:
         self.size = size
     
     def _get_files_and_classes(self, data_path):
-        model_files = glob('/root/.keras/datasets/ModelNet10/*/train/*.off')
+        model_files = glob(os.path.join(data_path, '*/train/*.off'))
         classes = [model_file.split('/')[-3] for model_file in model_files]
         all_classes = list(set(classes))
         classes = [all_classes.index(label) for label in classes]
@@ -33,8 +34,8 @@ class TFRecordCreator:
             print(); print('Writing TFRecord %i of %i...'%(j + 1, ct))
             ct2 = min(self.size, len(self.model_files) - j * self.size)
             with tf.io.TFRecordWriter(
-                tfrecord_dir + '/train%.2i-%i.tfrec'%(j + 1, ct2)
-                ) as writer:
+                os.path.join(tfrecord_dir, 'train%.2i-%i.tfrec'%(j + 1, ct2))
+            ) as writer:
                 for k in tqdm(range(ct2)):
                     x, y, z = trimesh.load(
                         self.model_files[self.size * j + k]
