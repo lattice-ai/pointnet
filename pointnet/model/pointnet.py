@@ -1,37 +1,20 @@
 import tensorflow as tf
 from .transformation import TNet
-from .layers import ConvBlock, MLPBlock
-from .regularizers import OrthogonalRegularizer
+from .blocks import classification_net
+from .layers import conv_block, dense_block
 
 
-class PointNetClassifier(tf.keras.Model):
-
-    def __init__(self, n_classes) -> None:
-        super(PointNetClassifier, self).__init__()
-        self.transformations = [TNet(3), TNet(32)]
-        self.conv_blocks = [
-            ConvBlock(32), ConvBlock(32), ConvBlock(32),
-            ConvBlock(32), ConvBlock(64), ConvBlock(512)
-        ]
-        self.max_pool = tf.keras.layers.GlobalMaxPooling1D()
-        self.mlp_blocks = [MLPBlock(256), MLPBlock(128)]
-        self.dropout = tf.keras.layers.Dropout(0.3)
-        self.output = tf.keras.layers.Dense(
-            n_classes, activation="softmax"
-        )
-    
-    def call(self, inputs):
-        x = self.transformations[0](inputs)
-        x = self.conv_blocks[0](x)
-        x = self.conv_blocks[1](x)
-        x = self.transformations[1](inputs)
-        x = self.conv_blocks[2](x)
-        x = self.conv_blocks[3](x)
-        x = self.conv_blocks[4](x)
-        x = self.max_pool(x)
-        x = self.mlp_blocks[0](x)
-        x = self.dropout(x)
-        x = self.mlp_blocks[1](x)
-        x = self.dropout(x)
-        x = self.output(x)
-        return x
+def pointNet(num_points, n_classes):
+    input_tensor = tf.keras.Input(shape=(num_points, 3))
+    x_t = TNet(input_tensor, num_points, 3)
+    x = tf.matmul(input_tensor, x_t)
+    x = conv_block(x, 64)
+    x = conv_block(x, 64)
+    x_t = TNet(x, num_points, 64)
+    x = tf.matmul(x, x_t)
+    x = conv_block(x, 64)
+    x = conv_block(x, 128)
+    x = conv_block(x, 1024)
+    x = tf.keras.layers.MaxPooling1D(pool_size=num_points)(x)
+    output_tensor = classification_net(x, n_classes)
+    return tf.keras.Model(input_tensor, output_tensor)
