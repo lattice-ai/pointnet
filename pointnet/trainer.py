@@ -9,6 +9,8 @@ class Trainer:
 
     def __init__(self, configs) -> None:
         self.configs = configs
+        os.environ['WANDB_API_KEY'] = self.configs['wandb-api-key']
+        wandb.init(project=self.configs['project'], name=self.configs['experiment-name'])
         self.train_dataset = get_dataset(self.configs['train_tfrecord_files'])
         self.val_dataset = get_dataset(self.configs['test_tfrecord_files'])
         self.model = pointNet(
