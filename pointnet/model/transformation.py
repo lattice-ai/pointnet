@@ -15,10 +15,9 @@ def TNet(input_tensor, num_points, features):
         features * features,
         kernel_initializer="zeros",
         bias_initializer=tf.keras.initializers.Constant(
-            np.eye(features).flatten().astype(np.float32)
+            tf.reshape(tf.cast(tf.eye(features), dtype=tf.float32), [-1])
         ),
         activity_regularizer=OrthogonalRegularizer(features)
     )(x)
-    # return tf.keras.layers.Reshape((features, features))(x)
     x = tf.reshape(x, (-1, features, features))
     return x
