@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 
 
 def get_visualization_figure(mesh, label):
-    x, y, z = mesh.numpy()[0].T
+    x, y, z = mesh.numpy().T
     fig = go.Figure(
         data=[
             go.Scatter3d(

@@ -16,15 +16,15 @@ def read_labeled_tfrecord(example):
     return mesh, label
 
 
-def get_dataset(tfrecord_files):
+def get_dataset(tfrecord_files, buffer_size, batch_size):
     ignore_order = tf.data.Options()
     ignore_order.experimental_deterministic = False
     dataset = tf.data.TFRecordDataset(
         tfrecord_files,
         num_parallel_reads=tf.data.experimental.AUTOTUNE
     ).with_options(ignore_order).map(read_labeled_tfrecord)
-    dataset = dataset.shuffle(2048)
-    dataset = dataset.batch(32)
+    dataset = dataset.shuffle(buffer_size)
+    dataset = dataset.batch(batch_size)
     dataset = dataset.prefetch(
         tf.data.experimental.AUTOTUNE
     )

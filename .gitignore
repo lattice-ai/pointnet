@@ -1,3 +1,6 @@
 env/
 .vscode/
 .DS_Store
+pointnet/__pycache__/
+pointnet/app/__pycache__/
+pointnet/dataset/__pycache__/
