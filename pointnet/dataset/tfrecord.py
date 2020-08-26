@@ -9,8 +9,8 @@ import tensorflow as tf
 class TFRecordCreator:
 
     def __init__(self, data_path, dataset_type, size) -> None:
-        self.model_files, self.classes, self.all_classes = self._get_files_and_classes(data_path)
         self.dataset_type = dataset_type
+        self.model_files, self.classes, self.all_classes = self._get_files_and_classes(data_path)
         self.size = size
     
     def _get_files_and_classes(self, data_path):
