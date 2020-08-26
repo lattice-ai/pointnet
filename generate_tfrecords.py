@@ -1,6 +1,5 @@
 import os
-from pointnet.dataset.tfrecord import TFRecordCreator
-from pointnet.dataset.download import download_dataset
+from pointnet.dataset import TFRecordCreator, download_dataset
 
 
 def generate_tfrecords():

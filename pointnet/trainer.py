@@ -1,7 +1,7 @@
 import os
 import wandb
 import tensorflow as tf
-from .model import pointNet
+from .model import PointNetClassifier
 from .dataset.data import get_dataset
 
 

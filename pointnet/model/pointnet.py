@@ -4,7 +4,7 @@ from .blocks import classification_net
 from .layers import conv_block, dense_block
 
 
-def pointNet(num_points, n_classes):
+def PointNetClassifier(num_points, n_classes):
     input_tensor = tf.keras.Input(shape=(num_points, 3))
     x_t = TNet(input_tensor, num_points, 3)
     x = tf.matmul(input_tensor, x_t)
