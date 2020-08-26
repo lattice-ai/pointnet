@@ -1,1 +1,1 @@
-from .pointnet import PointNetClassifier
+from .pointnet import pointNet
