@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.python import data
 
 
 def read_labeled_tfrecord(example):
@@ -16,13 +17,21 @@ def read_labeled_tfrecord(example):
     return mesh, label
 
 
-def get_dataset(tfrecord_files, buffer_size, batch_size):
+def apply_augmentation(mesh, label):
+    mesh += tf.random.uniform(mesh.shape, -0.005, 0.005, dtype=tf.float32)
+    # # shuffle points
+    # mesh = tf.random.shuffle(mesh)
+    return mesh, label
+
+
+def get_dataset(tfrecord_files, buffer_size, batch_size, augment):
     ignore_order = tf.data.Options()
     ignore_order.experimental_deterministic = False
     dataset = tf.data.TFRecordDataset(
         tfrecord_files,
         num_parallel_reads=tf.data.experimental.AUTOTUNE
     ).with_options(ignore_order).map(read_labeled_tfrecord)
+    if augment: dataset = dataset.map(apply_augmentation)
     dataset = dataset.shuffle(buffer_size)
     dataset = dataset.batch(batch_size)
     dataset = dataset.prefetch(

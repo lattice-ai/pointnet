@@ -11,9 +11,15 @@ class Trainer:
         self.configs = configs
         os.environ['WANDB_API_KEY'] = self.configs['wandb-api-key']
         wandb.init(project=self.configs['project'], name=self.configs['experiment-name'])
-        self.train_dataset = get_dataset(self.configs['train_tfrecord_files'])
-        self.val_dataset = get_dataset(self.configs['test_tfrecord_files'])
-        self.model = pointNet(
+        self.train_dataset = get_dataset(
+            self.configs['train_tfrecord_files'], self.configs['buffer_size'],
+            batch_size=self.configs['batch_size'], augment=True
+        )
+        self.val_dataset = get_dataset(
+            self.configs['test_tfrecord_files'], self.configs['buffer_size'],
+            batch_size=self.configs['batch_size'], augment=False
+        )
+        self.model = PointNetClassifier(
             self.configs['num_points'],
             self.configs['n_classes']
         )

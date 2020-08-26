@@ -6,8 +6,8 @@ from pointnet.dataset import get_dataset, download_dataset
 
 
 def run_app(classes, train_tfrecords, test_tfrecords):
-    train_dataset = get_dataset(train_tfrecords, buffer_size=2048, batch_size=1)
-    test_dataset = get_dataset(test_tfrecords, buffer_size=2048, batch_size=1)
+    train_dataset = get_dataset(train_tfrecords, buffer_size=2048, batch_size=1, augment=False)
+    test_dataset = get_dataset(test_tfrecords, buffer_size=2048, batch_size=1, augment=False)
 
     st.markdown('<h1>PointNet Classifier</h1></hr>', unsafe_allow_html=True)
 
