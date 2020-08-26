@@ -23,7 +23,6 @@ def get_dataset(tfrecord_files):
         tfrecord_files,
         num_parallel_reads=tf.data.experimental.AUTOTUNE
     ).with_options(ignore_order).map(read_labeled_tfrecord)
-    dataset = dataset.repeat()
     dataset = dataset.shuffle(2048)
     dataset = dataset.batch(32)
     dataset = dataset.prefetch(
