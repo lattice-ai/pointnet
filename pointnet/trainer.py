@@ -9,16 +9,22 @@ class Trainer:
 
     def __init__(self, configs) -> None:
         self.configs = configs
+        print('Connecting to Wandb....')
         os.environ['WANDB_API_KEY'] = self.configs['wandb-api-key']
         wandb.init(project=self.configs['project'], name=self.configs['experiment-name'])
+        print('Creating Train Dataset Object...')
         self.train_dataset = get_dataset(
             self.configs['train_tfrecord_files'], self.configs['buffer_size'],
             batch_size=self.configs['batch_size'], augment=True
         )
+        print(self.train_dataset)
+        print('Creating Test/Validation Dataset Object...')
         self.val_dataset = get_dataset(
             self.configs['test_tfrecord_files'], self.configs['buffer_size'],
             batch_size=self.configs['batch_size'], augment=False
         )
+        print(self.test_dataset)
+        print('Creating PointNet Classifier Model...')
         self.model = PointNetClassifier(
             self.configs['num_points'],
             self.configs['n_classes']
@@ -28,8 +34,10 @@ class Trainer:
             optimizer=tf.keras.optimizers.Adam(learning_rate=self.configs['learning-rate']),
             metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
         )
+        self.model.summary()
     
     def train(self):
+        print('Training for {} epochs'.format(self.configs['epochs']))
         callbacks = [
             tf.keras.callbacks.ModelCheckpoint(
                 filepath=os.path.join(
