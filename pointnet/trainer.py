@@ -25,7 +25,7 @@ class Trainer:
         )
         self.model.compile(
             loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=tf.keras.optimizers.Adam(learning_rate=self.configs['learning-rate']),
             metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
         )
     
