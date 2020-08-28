@@ -36,7 +36,12 @@ def apply_rotation(mesh, label):
         [[cos_theta, 0, sin_theta],
         [0, 1, 0], [-sin_theta, 0, cos_theta]]
     )
-    rotated_mesh = tf.tensordot(mesh, rotation_matrix)
+    rotated_mesh = tf.transpose(
+        tf.tensordot(
+            rotation_matrix,
+            tf.transpose(mesh), axes=1
+        )
+    )
     return rotated_mesh, label
 
 
