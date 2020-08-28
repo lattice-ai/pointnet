@@ -57,6 +57,7 @@ def get_dataset(tfrecord_files, buffer_size, batch_size, augment):
         dataset = dataset.map(apply_jitter)
     dataset = dataset.shuffle(buffer_size)
     dataset = dataset.batch(batch_size)
+    dataset = dataset.repeat()
     dataset = dataset.prefetch(
         tf.data.experimental.AUTOTUNE
     )

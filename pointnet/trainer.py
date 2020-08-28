@@ -48,7 +48,7 @@ class Trainer:
                 ),
                 monitor='val_loss', save_best_only=True,
                 mode='min', save_weights_only=True
-            ), wandb.keras.WandbCallback()
+            ), wandb.keras.WandbCallback(save_weights_only=True)
         ]
         history = self.model.fit(
             self.train_dataset, epochs=self.configs['epochs'],
