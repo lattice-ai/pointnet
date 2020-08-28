@@ -23,7 +23,7 @@ class Trainer:
             self.configs['test_tfrecord_files'], self.configs['buffer_size'],
             batch_size=self.configs['batch_size'], augment=False
         )
-        print(self.test_dataset)
+        print(self.val_dataset)
         print('Creating PointNet Classifier Model...')
         self.model = PointNetClassifier(
             self.configs['num_points'],
