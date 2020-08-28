@@ -5,13 +5,12 @@ from .regularizers import OrthogonalRegularizer
 
 
 def TNet(input_tensor, num_points, features):
-    x = conv_block(input_tensor, 64)
-    x = conv_block(x, 128)
-    x = conv_block(x, 1024)
-    # x = tf.keras.layers.MaxPooling1D(pool_size=num_points)(x)
+    x = conv_block(input_tensor, 32)
+    x = conv_block(x, 64)
+    x = conv_block(x, 512)
     x = tf.keras.layers.GlobalMaxPool1D()(x)
-    x = dense_block(x, 512)
     x = dense_block(x, 256)
+    x = dense_block(x, 128)
     x = tf.keras.layers.Dense(
         features * features,
         kernel_initializer="zeros",
