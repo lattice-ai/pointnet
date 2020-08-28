@@ -37,6 +37,8 @@ class Trainer:
         self.model.summary()
     
     def train(self):
+        train_steps = self.configs['train_files'] // self.configs['batch_size']
+        val_steps = self.configs['test_files'] // self.configs['batch_size']
         print('Training for {} epochs'.format(self.configs['epochs']))
         callbacks = [
             tf.keras.callbacks.ModelCheckpoint(
@@ -50,6 +52,7 @@ class Trainer:
         ]
         history = self.model.fit(
             self.train_dataset, epochs=self.configs['epochs'],
-            validation_data=self.val_dataset, callbacks=callbacks
+            validation_data=self.val_dataset, callbacks=callbacks,
+            steps_per_epoch=train_steps, validation_steps=val_steps
         )
         return history
