@@ -15,6 +15,7 @@ def PointNetClassifier(num_points, n_classes):
     x = conv_block(x, 64)
     x = conv_block(x, 128)
     x = conv_block(x, 1024)
-    x = tf.keras.layers.MaxPooling1D(pool_size=num_points)(x)
+    # x = tf.keras.layers.MaxPooling1D(pool_size=num_points)(x)
+    x = tf.keras.layers.GlobalMaxPool1D()(x)
     output_tensor = classification_net(x, n_classes)
     return tf.keras.Model(input_tensor, output_tensor)
