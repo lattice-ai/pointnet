@@ -82,11 +82,13 @@ class Manager:
         return self._class_map
 
     def _get_files_for_subset(self, subset):
-        return glob(os.path.join(self.data_dir,
-                                 self._config.subfolder_glob,
-                                 self._config.file_glob_fmt.format(
-                                     subset=subset
-                                 )))
+        glob_fmt = os.path.join(self.data_dir,
+                                self._config.subfolder_glob,
+                                self._config.file_glob_fmt.format(
+                                    subset=subset
+                                ))
+        print("[-] Using glob fmt: ", glob_fmt)
+        return glob(glob_fmt)
 
     def _get_label_from_mesh_path(self, path):
         return self.class_map[path.split("/")[-3]]
