@@ -4,6 +4,7 @@
 """Module for providing dataset manager."""
 
 import os
+from pathlib import Path
 from glob import glob
 
 from typing import Callable
@@ -33,6 +34,8 @@ class Manager:
         if self._data_dir is not None:
             return self._data_dir
 
+        os.makedirs(self._config.cache_dir, exist_ok=True)
+
         self._data_dir = tf.keras.utils.get_file(
             origin=self._config.origin,
             fname=self._config.fname,
@@ -41,6 +44,7 @@ class Manager:
             extract=self._config.extract
         )
 
+        self._data_dir = Path(self._data_dir).with_suffix("").__str__()
         return self._data_dir
 
     def register_augmentation(self, augmentation: Callable[[tf.Tensor, str],
@@ -78,6 +82,8 @@ class Manager:
                 subfolder.split("/")[-1]: i
                 for i, subfolder in enumerate(subfolders)
             }
+
+        print("[+] Class Map: ", self._class_map)
 
         return self._class_map
 

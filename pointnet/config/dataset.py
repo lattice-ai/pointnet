@@ -39,8 +39,8 @@ class Settings(BaseSettings):
         "http://3dvision.princeton.edu/projects/2014/3DShapeNets/" \
         "ModelNet10.zip"
     fname: str = "ModelNet10.zip"
-    cache_subdir: str = "./dataset/archives/"
-    cache_dir: str = "./datasets/modelnet10"
+    cache_subdir: str = "modelnet10"
+    cache_dir: str = "./datasets"
     extract: bool = True
     num_classes: int = 10
     mesh_cardinality: int = 2048
