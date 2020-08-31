@@ -13,6 +13,7 @@ import numpy as np
 import trimesh
 
 import tensorflow as tf
+import tensorflow_graphics as tfg
 
 import pointnet.config.dataset
 
@@ -107,21 +108,12 @@ class Manager:
     def _get_label_from_mesh_path(self, path: str) -> int:
         return self.class_map[path.split("/")[-3]]
 
-    @staticmethod
-    def _get_str_from_tensor(tensor: tf.Tensor) -> str:
-        tensor_str = str(tensor)
-        print("Tensor str: ", tensor_str)
-        tensor_str = tensor_str[tensor_str.index("'")+1:]
-        tensor_str = tensor_str[:tensor_str.index("'")]
-        return tensor_str
-
     def _read_mesh_with_label(self, path: tf.Tensor) -> Tuple[np.ndarray,
                                                               int]:
-        path = Manager._get_str_from_tensor(path)
+        mesh_content = tf.io.gfile.GFile(path, 'r')
+        mesh: trimesh.Trimesh = tfg.io.triangle_mesh.load(mesh_content)
 
-        assert Path(path).is_file()
-
-        mesh = trimesh.load(path).sample(self._config.mesh_cardinality)
+        mesh = mesh.sample(self._config.mesh_cardinality)
         label = self._get_label_from_mesh_path(path)
         return mesh, label
 
