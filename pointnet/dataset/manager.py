@@ -110,6 +110,7 @@ class Manager:
     @staticmethod
     def _get_str_from_tensor(tensor: tf.Tensor) -> str:
         tensor_str = str(tensor)
+        print("Tensor str: ", tensor_str)
         tensor_str = tensor_str[tensor_str.index("'")+1:]
         tensor_str = tensor_str[:tensor_str.index("'")]
         return tensor_str
