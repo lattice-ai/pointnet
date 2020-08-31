@@ -107,9 +107,16 @@ class Manager:
     def _get_label_from_mesh_path(self, path: str) -> int:
         return self.class_map[path.split("/")[-3]]
 
+    @staticmethod
+    def _get_str_from_tensor(tensor: tf.Tensor) -> str:
+        tensor_str = str(tensor)
+        tensor_str = tensor_str[tensor_str.index("'")+1:]
+        tensor_str = tensor_str[:tensor_str.index("'")]
+        return tensor_str
+
     def _read_mesh_with_label(self, path: tf.Tensor) -> Tuple[np.ndarray,
                                                               int]:
-        path = tf.compat.as_str_any(path)
+        path = Manager._get_str_from_tensor(path)
 
         assert Path(path).is_file()
 
