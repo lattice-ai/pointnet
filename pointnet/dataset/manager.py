@@ -7,9 +7,11 @@ import os
 from pathlib import Path
 from glob import glob
 
-from typing import Callable
+from typing import Callable, Tuple
 
+import numpy as np
 import trimesh
+
 import tensorflow as tf
 
 import pointnet.config.dataset
@@ -102,10 +104,11 @@ class Manager:
         print("[-] Using glob fmt: ", glob_fmt)
         return glob(glob_fmt)
 
-    def _get_label_from_mesh_path(self, path: str):
+    def _get_label_from_mesh_path(self, path: str) -> int:
         return self.class_map[path.split("/")[-3]]
 
-    def _read_mesh_with_label(self, path: tf.Tensor):
+    def _read_mesh_with_label(self, path: tf.Tensor) -> Tuple[np.ndarray,
+                                                              int]:
         path = str(path.numpy())
 
         assert Path(path).is_file()
