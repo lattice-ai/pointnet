@@ -117,6 +117,9 @@ class Manager:
             return self._train_ds
 
         train_files = self._get_files_for_subset(subset="train")
+
+        print("Train files; train_files[:3] = ", train_files[:3])
+
         self._train_ds = tf.data.Dataset.from_tensor_slices(train_files)
 
         self._train_ds = self._train_ds.shuffle(len(train_files))
