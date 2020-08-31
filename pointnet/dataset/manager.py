@@ -44,7 +44,7 @@ class Manager:
             extract=self._config.extract
         )
 
-        self._data_dir = Path(self._config.cache_dir,
+        self._data_dir = Path(os.path.realpath(self._config.cache_dir),
                               self._config.cache_subdir,
                               Path(archive_path).stem)
         assert self._data_dir.is_dir()
