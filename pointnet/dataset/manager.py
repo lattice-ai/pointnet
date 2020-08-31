@@ -44,6 +44,8 @@ class Manager:
             extract=self._config.extract
         )
 
+        print("[-] Path returned by get_file: ", self._data_dir)
+
         self._data_dir = Path(self._data_dir).with_suffix("").__str__()
         return self._data_dir
 
@@ -75,8 +77,8 @@ class Manager:
             dict mapping from class names to integer labels.
         """
         if self._class_map is None:
-            subfolders = glob(os.path.join(self.data_dir,
-                                           self._config.subfolder_glob))
+            subfolders = glob(
+                Path(self.data_dir, self._config.subfolder_glob).__str__())
 
             self._class_map = {
                 subfolder.split("/")[-1]: i
@@ -88,11 +90,10 @@ class Manager:
         return self._class_map
 
     def _get_files_for_subset(self, subset):
-        glob_fmt = os.path.join(self.data_dir,
-                                self._config.subfolder_glob,
-                                self._config.file_glob_fmt.format(
-                                    subset=subset
-                                ))
+        glob_fmt = Path(self.data_dir, self._config.subfolder_glob,
+                        self._config.file_glob_fmt.format(
+                            subset=subset
+                        )).__str__()
         print("[-] Using glob fmt: ", glob_fmt)
         return glob(glob_fmt)
 
