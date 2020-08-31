@@ -109,7 +109,7 @@ class Manager:
 
     def _read_mesh_with_label(self, path: tf.Tensor) -> Tuple[np.ndarray,
                                                               int]:
-        path = str(path.numpy())
+        path = tf.compat.as_str_any(path)
 
         assert Path(path).is_file()
 
