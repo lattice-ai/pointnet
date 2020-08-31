@@ -129,7 +129,7 @@ class Manager:
         self._train_ds = tf.data.Dataset.from_tensor_slices(train_files)
 
         print("[+] Sample data point from train_ds before read op: ",
-              next(self._train_ds))
+              next(iter(self._train_ds)))
 
         self._train_ds = self._train_ds.map(
             self._read_mesh_with_label).shuffle(buffer_size=len(train_files))
