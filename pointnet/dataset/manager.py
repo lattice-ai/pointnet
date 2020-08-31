@@ -49,6 +49,8 @@ class Manager:
                               Path(archive_path).stem)
         assert self._data_dir.is_dir()
 
+        print("[+] Data dir: ", self._data_dir)
+
         self._data_dir = self._data_dir.__str__()
         return self._data_dir
 
