@@ -6,3 +6,4 @@ pointnet/app/__pycache__/
 pointnet/dataset/__pycache__/
 *.env
 ignored/
+__pycache__/
