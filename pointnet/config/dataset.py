@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     extract: bool = True
     num_classes: int = 10
     mesh_cardinality: int = 2048
+    batch_size: int = 8
+    subfolder_glob: str = "[!README]*"
+    file_glob_fmt: str = "{subset}/*"
 
     class Config:
         """Nested Config class for specifying file to load settings from."""
