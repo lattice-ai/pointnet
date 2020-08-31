@@ -128,9 +128,8 @@ class Manager:
 
         self._train_ds = tf.data.Dataset.from_tensor_slices(train_files)
 
-        self._train_ds = self._train_ds.shuffle(len(train_files))
-
-        self._train_ds = self._train_ds.map(self._read_mesh_with_label)
+        self._train_ds = self._train_ds.map(
+            self._read_mesh_with_label).shuffle(buffer_size=len(train_files))
 
         for augmentation in self._augmentations:
             self._train_ds = self._train_ds.map(augmentation)
@@ -153,9 +152,10 @@ class Manager:
         test_files = self._get_files_for_subset(subset="test")
         self._test_ds = tf.data.Dataset.from_tensor_slices(test_files)
 
-        self._test_ds = self._test_ds.shuffle(len(test_files))
+        self._test_ds = self._test_ds
 
-        self._test_ds = self._test_ds.map(self._read_mesh_with_label).batch(
-            self._config.batch_size)
+        self._test_ds = self._test_ds.map(
+            self._read_mesh_with_label).shuffle(
+                buffer_size=len(test_files)).batch(self._config.batch_size)
 
         return self._test_ds
