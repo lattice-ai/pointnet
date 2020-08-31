@@ -11,7 +11,7 @@ from typing import Callable
 import trimesh
 import tensorflow as tf
 
-import pointnet.config
+import pointnet.config.dataset
 
 
 class Manager:
