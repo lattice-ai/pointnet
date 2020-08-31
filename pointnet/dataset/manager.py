@@ -106,7 +106,10 @@ class Manager:
         return self.class_map[path.split("/")[-3]]
 
     def _read_mesh_with_label(self, path: tf.Tensor):
-        path = str(path)
+        path = str(path.numpy())
+
+        assert Path(path).is_file()
+
         mesh = trimesh.load(path).sample(self._config.mesh_cardinality)
         label = self._get_label_from_mesh_path(path)
         return mesh, label
