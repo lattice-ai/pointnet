@@ -102,10 +102,11 @@ class Manager:
         print("[-] Using glob fmt: ", glob_fmt)
         return glob(glob_fmt)
 
-    def _get_label_from_mesh_path(self, path):
+    def _get_label_from_mesh_path(self, path: str):
         return self.class_map[path.split("/")[-3]]
 
-    def _read_mesh_with_label(self, path):
+    def _read_mesh_with_label(self, path: tf.Tensor):
+        path = str(path)
         mesh = trimesh.load(path).sample(self._config.mesh_cardinality)
         label = self._get_label_from_mesh_path(path)
         return mesh, label
