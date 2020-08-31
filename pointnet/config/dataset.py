@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     num_classes: int = 10
     mesh_cardinality: int = 2048
     batch_size: int = 8
+    shuffle_buffer_size: int = 1000
     subfolder_glob: str = "[!README]*"
     file_glob_fmt: str = "{subset}/*"
 

@@ -5,15 +5,14 @@
 
 import os
 from pathlib import Path
-from glob import glob
+import glob
 
-from typing import Callable, Tuple
+from typing import Callable
 
 import numpy as np
 import trimesh
 
 import tensorflow as tf
-import tensorflow_graphics as tfg
 
 import pointnet.config.dataset
 
@@ -85,7 +84,7 @@ class Manager:
             dict mapping from class names to integer labels.
         """
         if self._class_map is None:
-            subfolders = glob(
+            subfolders = glob.glob(
                 Path(self.data_dir, self._config.subfolder_glob).__str__())
 
             self._class_map = {
@@ -97,25 +96,19 @@ class Manager:
 
         return self._class_map
 
-    def _get_files_for_subset(self, subset):
+    def _files_generator(self, subset: str):
         glob_fmt = Path(self.data_dir, self._config.subfolder_glob,
                         self._config.file_glob_fmt.format(
                             subset=subset
                         )).__str__()
-        print("[-] Using glob fmt: ", glob_fmt)
-        return glob(glob_fmt)
+        for meshf in glob.iglob(glob_fmt):
+            yield meshf
 
     def _get_label_from_mesh_path(self, path: str) -> int:
         return self.class_map[path.split("/")[-3]]
 
-    def _read_mesh_with_label(self, path: tf.Tensor) -> Tuple[np.ndarray,
-                                                              int]:
-        mesh_content = tf.io.gfile.GFile(path, 'r')
-        mesh: trimesh.Trimesh = tfg.io.triangle_mesh.load(mesh_content)
-
-        mesh = mesh.sample(self._config.mesh_cardinality)
-        label = self._get_label_from_mesh_path(path)
-        return mesh, label
+    def _get_sampled_mesh(self, path: str) -> np.ndarray:
+        return trimesh.load(path).sample(self._config.mesh_cardinality)
 
     @property
     def train_ds(self) -> tf.data.Dataset:
@@ -126,20 +119,22 @@ class Manager:
             specified in the dataset settings config, with the registered
             augmentations.
         """
+
+        print("[+] Class Map: ", self.class_map)
+
         if self._train_ds is not None:
             return self._train_ds
 
-        train_files = self._get_files_for_subset(subset="train")
+        def generator_fn():
+            for meshf in self._files_generator(subset="train"):
+                yield (self._get_sampled_mesh(meshf),
+                       self._get_label_from_mesh_path(meshf))
 
-        print("Train files; train_files[:3] = ", train_files[:3])
+        self._train_ds = tf.data.Dataset.from_generator(
+            generator_fn, output_types=(tf.float64, tf.int64))
 
-        self._train_ds = tf.data.Dataset.from_tensor_slices(train_files)
-
-        print("[+] Sample data point from train_ds before read op: ",
-              next(iter(self._train_ds)))
-
-        self._train_ds = self._train_ds.map(
-            self._read_mesh_with_label).shuffle(buffer_size=len(train_files))
+        self._train_ds = self._train_ds.shuffle(
+            buffer_size=self._config.shuffle_buffer_size)
 
         for augmentation in self._augmentations:
             self._train_ds = self._train_ds.map(augmentation)
@@ -159,13 +154,16 @@ class Manager:
         if self._test_ds is not None:
             return self._test_ds
 
-        test_files = self._get_files_for_subset(subset="test")
-        self._test_ds = tf.data.Dataset.from_tensor_slices(test_files)
+        def generator_fn():
+            for meshf in self._files_generator(subset="test"):
+                yield (self._get_sampled_mesh(meshf),
+                       self._get_label_from_mesh_path(meshf))
 
-        self._test_ds = self._test_ds
+        self._test_ds = tf.data.Dataset.from_generator(
+            generator_fn, output_types=(tf.float64, tf.int64))
 
-        self._test_ds = self._test_ds.map(
-            self._read_mesh_with_label).shuffle(
-                buffer_size=len(test_files)).batch(self._config.batch_size)
+        self._test_ds = self._test_ds.shuffle(
+            buffer_size=self._config.shuffle_buffer_size).batch(
+                self._config.batch_size)
 
         return self._test_ds
